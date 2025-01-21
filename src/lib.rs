@@ -8,20 +8,26 @@ pub struct Config {
 
 impl Config {
     pub fn build(args: &[String]) -> Result<Config, &'static str> {
-      if args.len() < 3 {
-          return Err("not enough arguments");
-      }
-      let query = args[1].clone();
-      let file_path = args[2].clone();
+        if args.len() < 3 {
+            return Err("not enough arguments");
+        }
+        let query = args[1].clone();
+        let file_path = args[2].clone();
 
-      Ok(Config { query, file_path })
+        Ok(Config { query, file_path })
     }
 }
 
 pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
-    let contents = fs::read_to_string(config.file_path).expect("Should htve been able to read the file");
+    let contents =
+        fs::read_to_string(config.file_path).expect("Should htve been able to read the file");
 
-    println!("With text: \n{contents}");
+    // println!("With text: \n{contents}");
+
+    for line in search(&config.query, &contents) {
+        println!("{line}");
+    }
+
     Ok(())
 }
 
@@ -42,5 +48,12 @@ Pick three.";
 }
 
 pub fn search<'a>(query: &str, contents: &'a str) -> Vec<&'a str> {
-    vec![]
+    let mut results = Vec::new();
+    for line in contents.lines() {
+        if line.contains(query) {
+            results.push(line);
+        }
+    }
+
+    results
 }
