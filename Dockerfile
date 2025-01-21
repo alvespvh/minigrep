@@ -1,9 +1,9 @@
 FROM rust:1.81.0 as builder
-RUN cargo new sincronizacoes_big_ms
-WORKDIR /sincronizacoes_big_ms
+RUN cargo new minigrep
+WORKDIR /minigrep
 ADD Cargo.toml .
 ADD Cargo.lock .
-COPY ./src/big_to_active_model ./src/big_to_active_model
+# COPY ./src/big_to_active_model ./src/big_to_active_model
 RUN cargo build -r
 COPY ./src ./src
 RUN echo "" >> src/main.rs \
@@ -13,7 +13,7 @@ RUN echo "" >> src/main.rs \
 
 FROM ubuntu:22.04
 ENV DEBIAN_FRONTEND noninteractive
-WORKDIR /sincronizacoes_big_ms
+WORKDIR /minigrep
 RUN apt update && apt install tzdata -y && rm -rf /var/lib/apt/lists/*
-COPY --from=builder /sincronizacoes_big_ms/target/release/sincronizacoes_big_ms .
-CMD ["./sincronizacoes_big_ms"]
+COPY --from=builder /minigrep/target/release/minigrep .
+CMD ["./minigrep"]
